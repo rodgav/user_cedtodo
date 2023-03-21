@@ -10,9 +10,9 @@ import 'package:user_cedtodo/startapp/data/network/failure.dart';
 import 'package:user_cedtodo/startapp/data/network/network_info.dart';
 import 'package:user_cedtodo/startapp/internationalization/intl/l10n.dart';
 
-class AuthenticatorRepositoryImpl implements AuthenticatorRepository {
+class AuthenticatorRepositoryImpl extends AuthenticatorRepository {
   final AuthenticatorRemoteDataSource _authenticatorRemoteDataSource;
-  final NetworkInfo _networkInfo;
+  final NetworkInfo? _networkInfo;
   final S _s;
 
   AuthenticatorRepositoryImpl(
@@ -20,36 +20,53 @@ class AuthenticatorRepositoryImpl implements AuthenticatorRepository {
 
   @override
   Future<Either<Failure, Account>> create(CreateRequest createRequest) async {
-    if(await _networkInfo.isConnected){
+    if (await _networkInfo?.isConnected ?? true) {
       try {
         final account =
-        await _authenticatorRemoteDataSource.create(createRequest);
-        Right(account);
+            await _authenticatorRemoteDataSource.create(createRequest);
+        return Right(account);
       } catch (e) {
-        Left(ErrorHandler.handle(e, _s));
+        return Left(ErrorHandler.handle(e, _s).failure);
       }
-    }else{Left(ErrorHandler.handle(DataSource.no_internet_connection, _s));
+    } else {
+      return Left(
+        DataSource.no_internet_connection.getFailure(0, _s),
+      );
     }
-
   }
 
   @override
   Future<Either<Failure, Session>> createEmailSession(
-      CreateEmailRequest createEmailRequest) {
-    // TODO: implement createEmailSession
-    throw UnimplementedError();
+      CreateEmailRequest createEmailRequest) async {
+    if (await _networkInfo?.isConnected ?? true) {
+      final session = await _authenticatorRemoteDataSource
+          .createEmailSession(createEmailRequest);
+      return Right(session);
+    } else {
+      return Left(DataSource.no_internet_connection.getFailure(0, _s));
+    }
   }
 
   @override
-  Future<Either<Failure, Token>> createRecovery(String email) {
-    // TODO: implement createRecovery
-    throw UnimplementedError();
+  Future<Either<Failure, Token>> createRecovery(String email) async {
+    if (await _networkInfo?.isConnected ?? true) {
+      final session =
+          await _authenticatorRemoteDataSource.createRecovery(email);
+      return Right(session);
+    } else {
+      return Left(DataSource.no_internet_connection.getFailure(0, _s));
+    }
   }
 
   @override
   Future<Either<Failure, Token>> updateRecovery(
-      UpdateRecoveryRequest updateRecoveryRequest) {
-    // TODO: implement updateRecovery
-    throw UnimplementedError();
+      UpdateRecoveryRequest updateRecoveryRequest) async {
+    if (await _networkInfo?.isConnected ?? true) {
+      final session = await _authenticatorRemoteDataSource
+          .updateRecovery(updateRecoveryRequest);
+      return Right(session);
+    } else {
+      return Left(DataSource.no_internet_connection.getFailure(0, _s));
+    }
   }
 }

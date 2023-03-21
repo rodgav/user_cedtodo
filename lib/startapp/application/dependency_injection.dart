@@ -1,10 +1,15 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:user_cedtodo/main.dart';
-import 'package:user_cedtodo/startapp/data/data_source/remote_datasource.dart';
-import 'package:user_cedtodo/startapp/data/network/app_service.dart';
+import 'package:user_cedtodo/startapp/data/data_source/startapp_remote_datasource.dart';
+import 'package:user_cedtodo/startapp/data/service/startapp_service.dart';
 import 'package:user_cedtodo/startapp/data/network/appwrite_factory.dart';
 import 'package:user_cedtodo/startapp/data/network/dio_factory.dart';
+import 'package:user_cedtodo/startapp/data/network/network_info.dart';
+import 'package:user_cedtodo/startapp/data/repository/startapp_repository_impl.dart';
+import 'package:user_cedtodo/startapp/domain/usecase/get_session.dart';
 import 'package:user_cedtodo/startapp/internationalization/intl/l10n.dart';
 
 Future<void> initModule() async {
@@ -13,7 +18,18 @@ Future<void> initModule() async {
   final client = AppwriteFactory().getClient();
   getIt.registerLazySingleton<Dio>(() => dio);
   getIt.registerLazySingleton<Client>(() => client);
-  getIt.registerLazySingleton<AppService>(() => AppService(dio, client));
-  getIt.registerLazySingleton<RemoteDataSourceImpl>(
-      () => RemoteDataSourceImpl(getIt<AppService>()));
+  if (!kIsWeb) {
+    final internetConnectionChecker = InternetConnectionChecker();
+    getIt.registerLazySingleton<NetworkInfoImpl>(
+        () => NetworkInfoImpl(internetConnectionChecker));
+  }
+  getIt.registerLazySingleton<StartappService>(
+      () => StartappService(dio, client));
+  getIt.registerLazySingleton<StartappRemoteDataSourceImpl>(
+      () => StartappRemoteDataSourceImpl(getIt<StartappService>()));
+  getIt.registerLazySingleton<StartappRepositoryImpl>(() =>
+      StartappRepositoryImpl(getIt<StartappRemoteDataSourceImpl>(),
+          kIsWeb ? null : getIt<NetworkInfoImpl>(), getIt<S>()));
+  getIt.registerLazySingleton<GetSessionUseCase>(
+      () => GetSessionUseCase(getIt<StartappRepositoryImpl>()));
 }
