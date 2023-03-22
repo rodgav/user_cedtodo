@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:user_cedtodo/startapp/application/application.dart';
-import 'package:user_cedtodo/startapp/application/dependency_injection.dart';
+import 'package:user_cedtodo/startapp/application/startapp_dependency_injection.dart';
 
 final getIt = GetIt.instance;
 

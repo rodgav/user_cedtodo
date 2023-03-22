@@ -9,5 +9,5 @@ class StartappService {
   StartappService(this._dio, Client client) : _account = Account(client);
 
   Future<models.Session> getSession() =>
-      _account.getSession(sessionId: 'sessionId');
+      _account.getSession(sessionId: 'current');
 }

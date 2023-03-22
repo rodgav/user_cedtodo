@@ -9,6 +9,7 @@ import 'package:user_cedtodo/startapp/data/network/appwrite_factory.dart';
 import 'package:user_cedtodo/startapp/data/network/dio_factory.dart';
 import 'package:user_cedtodo/startapp/data/network/network_info.dart';
 import 'package:user_cedtodo/startapp/data/repository/startapp_repository_impl.dart';
+import 'package:user_cedtodo/startapp/domain/repository/startapp_repository.dart';
 import 'package:user_cedtodo/startapp/domain/usecase/get_session.dart';
 import 'package:user_cedtodo/startapp/internationalization/intl/l10n.dart';
 
@@ -20,16 +21,19 @@ Future<void> initModule() async {
   getIt.registerLazySingleton<Client>(() => client);
   if (!kIsWeb) {
     final internetConnectionChecker = InternetConnectionChecker();
-    getIt.registerLazySingleton<NetworkInfoImpl>(
+    getIt.registerLazySingleton<NetworkInfo>(
         () => NetworkInfoImpl(internetConnectionChecker));
   }
   getIt.registerLazySingleton<StartappService>(
       () => StartappService(dio, client));
-  getIt.registerLazySingleton<StartappRemoteDataSourceImpl>(
+
+  getIt.registerLazySingleton<StartappRemoteDataSource>(
       () => StartappRemoteDataSourceImpl(getIt<StartappService>()));
-  getIt.registerLazySingleton<StartappRepositoryImpl>(() =>
-      StartappRepositoryImpl(getIt<StartappRemoteDataSourceImpl>(),
-          kIsWeb ? null : getIt<NetworkInfoImpl>(), getIt<S>()));
+
+  getIt.registerLazySingleton<StartappRepository>(() =>
+      StartappRepositoryImpl(getIt<StartappRemoteDataSource>(),
+          kIsWeb ? null : getIt<NetworkInfo>(), getIt<S>()));
+
   getIt.registerLazySingleton<GetSessionUseCase>(
-      () => GetSessionUseCase(getIt<StartappRepositoryImpl>()));
+      () => GetSessionUseCase(getIt<StartappRepository>()));
 }
