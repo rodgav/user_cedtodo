@@ -2,7 +2,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:user_cedtodo/startapp/domain/usecase/get_session.dart';
 import 'package:user_cedtodo/startapp/presentation/base/base_viewmodel.dart';
 import 'package:user_cedtodo/startapp/presentation/results/generic_result.dart';
-import 'package:user_cedtodo/startapp/presentation/splash/session_result.dart';
 
 class SplashViewModel extends BaseViewModel
     with SplashViewModelInput, SplashViewModelOutput {
