@@ -12,6 +12,7 @@ import 'package:user_cedtodo/startapp/data/repository/startapp_repository_impl.d
 import 'package:user_cedtodo/startapp/domain/repository/startapp_repository.dart';
 import 'package:user_cedtodo/startapp/domain/usecase/get_session.dart';
 import 'package:user_cedtodo/startapp/internationalization/intl/l10n.dart';
+import 'package:user_cedtodo/startapp/presentation/splash/splash_viewmodel.dart';
 
 Future<void> initModule() async {
   getIt.registerLazySingleton<S>(() => S());
@@ -30,10 +31,14 @@ Future<void> initModule() async {
   getIt.registerLazySingleton<StartappRemoteDataSource>(
       () => StartappRemoteDataSourceImpl(getIt<StartappService>()));
 
-  getIt.registerLazySingleton<StartappRepository>(() =>
-      StartappRepositoryImpl(getIt<StartappRemoteDataSource>(),
-          kIsWeb ? null : getIt<NetworkInfo>(), getIt<S>()));
+  getIt.registerLazySingleton<StartappRepository>(() => StartappRepositoryImpl(
+      getIt<StartappRemoteDataSource>(),
+      kIsWeb ? null : getIt<NetworkInfo>(),
+      getIt<S>()));
 
   getIt.registerLazySingleton<GetSessionUseCase>(
       () => GetSessionUseCase(getIt<StartappRepository>()));
+
+  getIt.registerLazySingleton<SplashViewModel>(
+      () => SplashViewModel(getIt<GetSessionUseCase>()));
 }

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/route.dart';
 
-showDialogError(BuildContext context, String message) {
+showDialogMessage(BuildContext context,
+    {String title = 'Error',
+    String message = 'Ocurrio un error, intentelo dentro un momento',
+    String? leftText,
+    VoidCallback? leftOnPressed,
+    String rightText = 'Accept',
+    VoidCallback? rightOnPressed}) {
   showDialog(
       context: context,
       builder: (_) {
@@ -10,10 +15,14 @@ showDialogError(BuildContext context, String message) {
           title: const Text('Error dialog'),
           content: Text(message),
           actions: [
+            leftText != null
+                ? ElevatedButton(
+                    onPressed: leftOnPressed ?? context.back,
+                    child: const Text('cancel'))
+                : const SizedBox(),
             ElevatedButton(
-                onPressed: context.back, child: const Text('cancel')),
-            ElevatedButton(
-                onPressed: () => _.pop(), child: const Text('accept')),
+                onPressed: rightOnPressed ?? context.back,
+                child: Text(rightText)),
           ],
         );
       });

@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:user_cedtodo/main.dart';
-import 'package:user_cedtodo/splash/presentation/splash/session_result.dart';
-import 'package:user_cedtodo/splash/presentation/splash/splash_viewmodel.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/routes.dart';
+import 'package:user_cedtodo/startapp/presentation/results/generic_result.dart';
+import 'package:user_cedtodo/startapp/presentation/splash/splash_viewmodel.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _SplashViewState extends State<SplashView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _splashViewModel.sessionOutput.listen((event) {
         _timer = Timer(const Duration(seconds: 2), () {
-          if (event is SessionSuccess) {
+          if (event is GenericSuccess) {
             context.go(AppRoutes.restaurants);
           } else {
             context.go(AppRoutes.login);

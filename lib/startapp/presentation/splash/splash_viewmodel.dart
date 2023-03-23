@@ -1,7 +1,8 @@
 import 'package:rxdart/rxdart.dart';
-import 'package:user_cedtodo/splash/presentation/splash/session_result.dart';
 import 'package:user_cedtodo/startapp/domain/usecase/get_session.dart';
 import 'package:user_cedtodo/startapp/presentation/base/base_viewmodel.dart';
+import 'package:user_cedtodo/startapp/presentation/results/generic_result.dart';
+import 'package:user_cedtodo/startapp/presentation/splash/session_result.dart';
 
 class SplashViewModel extends BaseViewModel
     with SplashViewModelInput, SplashViewModelOutput {
@@ -9,13 +10,13 @@ class SplashViewModel extends BaseViewModel
 
   SplashViewModel(this._getSessionUseCase);
 
-  BehaviorSubject<SessionResult> _sessionStreCtrl =
-      BehaviorSubject<SessionResult>();
+  BehaviorSubject<GenericResult> _sessionStreCtrl =
+      BehaviorSubject<GenericResult>();
 
   @override
   start() {
     if (_sessionStreCtrl.isClosed) {
-      _sessionStreCtrl = BehaviorSubject<SessionResult>();
+      _sessionStreCtrl = BehaviorSubject<GenericResult>();
     }
     _getSession();
     return super.start();
@@ -28,25 +29,23 @@ class SplashViewModel extends BaseViewModel
   }
 
   @override
-  Sink<SessionResult> get sessionInput => _sessionStreCtrl.sink;
+  Sink<GenericResult> get sessionInput => _sessionStreCtrl.sink;
 
   @override
-  Stream<SessionResult> get sessionOutput =>
+  Stream<GenericResult> get sessionOutput =>
       _sessionStreCtrl.stream.map((session) => session);
 
   _getSession() async {
     (await _getSessionUseCase.execute(null)).fold(
-        (l) => _sessionStreCtrl.add(SessionError(message: l.message)),
-        (r) => _sessionStreCtrl.add(SessionSuccess()));
+        (l) => _sessionStreCtrl.add(GenericError(message: l.message)),
+        (r) => _sessionStreCtrl.add(GenericSuccess()));
   }
 }
 
 abstract class SplashViewModelInput {
-  Sink<SessionResult> get sessionInput;
+  Sink<GenericResult> get sessionInput;
 }
 
 abstract class SplashViewModelOutput {
-  Stream<SessionResult> get sessionOutput;
+  Stream<GenericResult> get sessionOutput;
 }
-
-

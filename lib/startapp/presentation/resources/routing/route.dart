@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:user_cedtodo/authenticator/application/authenticator_dependency_injection.dart';
 import 'package:user_cedtodo/authenticator/presentation/login/login_view.dart';
 import 'package:user_cedtodo/authenticator/presentation/recover_password/recover_password_view.dart';
 import 'package:user_cedtodo/authenticator/presentation/recover_password_confirm/recover_password_confirm_view.dart';
@@ -12,9 +13,8 @@ import 'package:user_cedtodo/home/presentation/home/pages/restaurant/restaurant.
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_view.dart';
 import 'package:user_cedtodo/purchase/presentation/cart/cart_view.dart';
 import 'package:user_cedtodo/purchase/presentation/finalize_purchase/finalize_purchase_view.dart';
-import 'package:user_cedtodo/splash/app/splash_dependency_injection.dart';
-import 'package:user_cedtodo/splash/presentation/splash/splash_view.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/routes.dart';
+import 'package:user_cedtodo/startapp/presentation/splash/splash_view.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -30,28 +30,29 @@ class AppRoute {
     routes: [
       GoRoute(
           path: AppRoutes.splash,
-          builder: (context, state) {
-            initSplashModule();
-            return const SplashView();
-          }),
+          builder: (context, state) => const SplashView()),
       GoRoute(
           path: AppRoutes.login,
           builder: (context, state) {
+            initLogin();
             return const LoginView();
           }),
       GoRoute(
           path: AppRoutes.register,
           builder: (context, state) {
+            initRegister();
             return const RegisterView();
           }),
       GoRoute(
           path: AppRoutes.recoverPassword,
           builder: (context, state) {
+            initRecoverPassword();
             return const RecoverPasswordView();
           }),
       GoRoute(
           path: AppRoutes.recoverPasswordConfirm,
           builder: (context, state) {
+            initRecoverPasswordConfirm();
             return const RecoverPasswordConfirmView();
           }),
       ShellRoute(
