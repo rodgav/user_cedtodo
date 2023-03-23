@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:user_cedtodo/main.dart';
+import 'package:user_cedtodo/splash/presentation/splash/session_result.dart';
 import 'package:user_cedtodo/splash/presentation/splash/splash_viewmodel.dart';
-import 'package:user_cedtodo/startapp/presentation/resources/dialogs/dialogs.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/routes.dart';
 
 class SplashView extends StatefulWidget {
@@ -22,13 +22,11 @@ class _SplashViewState extends State<SplashView> {
     _splashViewModel.start();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _splashViewModel.sessionOutput.listen((event) {
-        _timer = Timer(const Duration(seconds: 5), () {
+        _timer = Timer(const Duration(seconds: 2), () {
           if (event is SessionSuccess) {
             context.go(AppRoutes.restaurants);
-          } else if (event is SessionError) {
-            showDialogError(context, event.message);
           } else {
-            showDialogError(context, 'Ocurrio un error intentelo mas tarde');
+            context.go(AppRoutes.login);
           }
         });
       });
@@ -50,10 +48,8 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('splash'),
-      ),
+    return const Scaffold(
+      body: Center(child: SizedBox(width: 100,height: 100,child: FlutterLogo())),
     );
   }
 }

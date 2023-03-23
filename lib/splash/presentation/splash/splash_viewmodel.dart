@@ -1,4 +1,5 @@
 import 'package:rxdart/rxdart.dart';
+import 'package:user_cedtodo/splash/presentation/splash/session_result.dart';
 import 'package:user_cedtodo/startapp/domain/usecase/get_session.dart';
 import 'package:user_cedtodo/startapp/presentation/base/base_viewmodel.dart';
 
@@ -36,7 +37,7 @@ class SplashViewModel extends BaseViewModel
   _getSession() async {
     (await _getSessionUseCase.execute(null)).fold(
         (l) => _sessionStreCtrl.add(SessionError(message: l.message)),
-        (r) => SessionSuccess());
+        (r) => _sessionStreCtrl.add(SessionSuccess()));
   }
 }
 
@@ -48,16 +49,4 @@ abstract class SplashViewModelOutput {
   Stream<SessionResult> get sessionOutput;
 }
 
-abstract class SessionResult {
-  final String message;
 
-  SessionResult({required this.message});
-}
-
-class SessionSuccess extends SessionResult {
-  SessionSuccess() : super(message: '');
-}
-
-class SessionError extends SessionResult {
-  SessionError({required String message}) : super(message: message);
-}
