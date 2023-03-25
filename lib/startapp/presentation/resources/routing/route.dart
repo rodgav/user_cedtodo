@@ -7,9 +7,11 @@ import 'package:user_cedtodo/authenticator/presentation/recover_password_confirm
 import 'package:user_cedtodo/authenticator/presentation/register/register_view.dart';
 import 'package:user_cedtodo/delivery/presentation/chat/chat_view.dart';
 import 'package:user_cedtodo/delivery/presentation/delivery/delivery_view.dart';
+import 'package:user_cedtodo/home/application/home_dependency_injection.dart';
+import 'package:user_cedtodo/home/domain/model/restaurants_model.dart';
 import 'package:user_cedtodo/home/presentation/home/home_view.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/profile/profile_view.dart';
-import 'package:user_cedtodo/home/presentation/home/pages/restaurant/restaurant.dart';
+import 'package:user_cedtodo/home/presentation/home/pages/restaurant/restaurant_view.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_view.dart';
 import 'package:user_cedtodo/purchase/presentation/cart/cart_view.dart';
 import 'package:user_cedtodo/purchase/presentation/finalize_purchase/finalize_purchase_view.dart';
@@ -57,28 +59,32 @@ class AppRoute {
           }),
       ShellRoute(
           navigatorKey: _shellNavigatorKey,
-          builder: (context, state, widget) {
-            return HomeView(widget: widget);
-          },
+          builder: (context, state, widget) => HomeView(widget: widget),
           routes: [
             GoRoute(
                 path: AppRoutes.restaurants,
                 builder: (context, state) {
+                  initRestaurants();
                   return const RestaurantsView();
                 },
                 routes: [
                   GoRoute(
                       path: '${AppRoutes.restaurant}/:id',
                       builder: (context, state) {
+                        initRestaurant();
                         final restaurantId = state.params['id'];
+                        final restaurantDataModel =
+                            state.extra as RestaurantDataModel?;
                         return RestaurantView(
                           restaurantId: restaurantId,
+                          restaurantDataModel: restaurantDataModel,
                         );
                       })
                 ]),
             GoRoute(
                 path: AppRoutes.profile,
                 builder: (context, state) {
+                  initProfile();
                   return const ProfileView();
                 }),
           ]),

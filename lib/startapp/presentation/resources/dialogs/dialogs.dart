@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/route.dart';
 
 showDialogMessage(BuildContext context,
@@ -21,7 +22,7 @@ showDialogMessage(BuildContext context,
                     child: const Text('cancel'))
                 : const SizedBox(),
             ElevatedButton(
-                onPressed: rightOnPressed ?? context.back,
+                onPressed: rightOnPressed ?? _.pop,
                 child: Text(rightText)),
           ],
         );
