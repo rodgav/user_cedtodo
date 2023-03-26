@@ -3,8 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:user_cedtodo/main.dart';
+import 'package:user_cedtodo/startapp/data/data_source/startapp_local_datasource.dart';
 import 'package:user_cedtodo/startapp/data/data_source/startapp_remote_datasource.dart';
-import 'package:user_cedtodo/startapp/data/service/startapp_service.dart';
+import 'package:user_cedtodo/startapp/data/local/hive_factory.dart';
+import 'package:user_cedtodo/startapp/data/service/startapp_hive_service.dart';
+import 'package:user_cedtodo/startapp/data/service/startapp_network_service.dart';
 import 'package:user_cedtodo/startapp/data/network/appwrite_factory.dart';
 import 'package:user_cedtodo/startapp/data/network/dio_factory.dart';
 import 'package:user_cedtodo/startapp/data/network/network_info.dart';
@@ -18,21 +21,29 @@ Future<void> initModule() async {
   getIt.registerLazySingleton<S>(() => S());
   final dio = await DioFactory().getDio();
   final client = AppwriteFactory().getClient();
+  final sessionBox = await HiveFactory().initHive();
   getIt.registerLazySingleton<Dio>(() => dio);
   getIt.registerLazySingleton<Client>(() => client);
+  getIt.registerLazySingleton<StartAppHiveService>(
+          () => StartAppHiveService(sessionBox));
+
   if (!kIsWeb) {
     final internetConnectionChecker = InternetConnectionChecker();
     getIt.registerLazySingleton<NetworkInfo>(
         () => NetworkInfoImpl(internetConnectionChecker));
   }
-  getIt.registerLazySingleton<StartappService>(
-      () => StartappService(dio, client));
+  getIt.registerLazySingleton<StartappNetworkService>(
+      () => StartappNetworkService(dio, client));
 
   getIt.registerLazySingleton<StartappRemoteDataSource>(
-      () => StartappRemoteDataSourceImpl(getIt<StartappService>()));
+      () => StartappRemoteDataSourceImpl(getIt<StartappNetworkService>()));
+
+  getIt.registerLazySingleton<StartAppLocalDataSource>(
+      () => StartAppLocalDataSourceImpl(getIt<StartAppHiveService>()));
 
   getIt.registerLazySingleton<StartappRepository>(() => StartappRepositoryImpl(
       getIt<StartappRemoteDataSource>(),
+      getIt<StartAppLocalDataSource>(),
       kIsWeb ? null : getIt<NetworkInfo>(),
       getIt<S>()));
 

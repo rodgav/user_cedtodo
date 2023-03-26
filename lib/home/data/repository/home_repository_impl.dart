@@ -4,10 +4,13 @@ import 'package:appwrite/models.dart';
 import 'package:dartz/dartz.dart';
 import 'package:user_cedtodo/home/data/datasource/home_remote_datasource.dart';
 import 'package:user_cedtodo/home/data/mapper/categories_mapper.dart';
+import 'package:user_cedtodo/home/data/mapper/products_mapper.dart';
 import 'package:user_cedtodo/home/data/mapper/restaurants_mapper.dart';
 import 'package:user_cedtodo/home/data/responses/categories_response.dart';
+import 'package:user_cedtodo/home/data/responses/products_response.dart';
 import 'package:user_cedtodo/home/data/responses/restaurants_response.dart';
 import 'package:user_cedtodo/home/domain/model/categories_model.dart';
+import 'package:user_cedtodo/home/domain/model/products_model.dart';
 import 'package:user_cedtodo/home/domain/model/restaurants_model.dart';
 import 'package:user_cedtodo/home/domain/repository/home_repository.dart';
 import 'package:user_cedtodo/startapp/data/network/error_handler.dart';
@@ -118,14 +121,35 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<Failure, DocumentList>> products(List<String> queries) {
-    // TODO: implement products
-    throw UnimplementedError();
+  Future<Either<Failure, ProductsModel>> products(List<String> queries) async {
+    if (await _networkInfo?.isConnected ?? true) {
+      try {
+        final products = await _homeRemoteDataSource.products(queries);
+        final productsResponse = ProductsResponse.fromJson(products.toMap());
+        final productsModel = productsResponse.toDomain();
+        return Right(productsModel);
+      } catch (e) {
+        return Left(ErrorHandler.handle(e, _s).failure);
+      }
+    } else {
+      return Left(DataSource.no_internet_connection.getFailure(0, _s));
+    }
   }
 
   @override
-  Future<Either<Failure, Document>> product(String productId) {
-    // TODO: implement product
-    throw UnimplementedError();
+  Future<Either<Failure, ProductDataModel>> product(String productId) async {
+    if (await _networkInfo?.isConnected ?? true) {
+      try {
+        final product = await _homeRemoteDataSource.product(productId);
+        final productDataResponse =
+            ProductDataResponse.fromJson(product.toMap());
+        final productDataModel = productDataResponse.toDomain();
+        return Right(productDataModel);
+      } catch (e) {
+        return Left(ErrorHandler.handle(e, _s).failure);
+      }
+    } else {
+      return Left(DataSource.no_internet_connection.getFailure(0, _s));
+    }
   }
 }

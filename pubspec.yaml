@@ -26,7 +26,7 @@ dependencies:
   json_annotation: ^4.8.0
   shimmer: ^2.0.0
   cached_network_image: ^3.2.3
-  mockito: ^5.3.2
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +36,7 @@ dev_dependencies:
   #fvm flutter pub run build_runner build
   json_serializable: ^6.6.1
   build_runner: ^2.3.3
+  hive_generator: ^2.0.0
 
 flutter:
 

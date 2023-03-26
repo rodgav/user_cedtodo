@@ -7,6 +7,7 @@ import 'package:user_cedtodo/home/domain/usecases/get_restaurants_usecase.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/categories_result.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_result.dart';
 import 'package:user_cedtodo/startapp/presentation/base/base_viewmodel.dart';
+import 'package:user_cedtodo/startapp/presentation/results/generic_data_state.dart';
 
 class RestaurantsViewModel extends BaseViewModel
     with RestaurantsViewModelInput, RestaurantsViewModelOutput {
@@ -75,7 +76,7 @@ class RestaurantsViewModel extends BaseViewModel
         final restaurantsModel = restaurantsResult.restaurantsModel;
         restaurantsResultInput.add(RestaurantsSuccess(
             restaurantsModel: restaurantsModel,
-            restaurantsDataLoads: RestaurantsDataLoads.loadData));
+            genericDataState: GenericDataSate.loadingData));
         offset = restaurantsModel?.restaurantsDataModel.length ?? 0;
         totalRestaurants = restaurantsModel?.total ?? 0;
         queries.add(Query.offset(offset));
@@ -84,13 +85,12 @@ class RestaurantsViewModel extends BaseViewModel
         } else {
           restaurantsResultInput.add(RestaurantsSuccess(
               restaurantsModel: restaurantsModel,
-              restaurantsDataLoads: RestaurantsDataLoads.noData));
+              genericDataState: GenericDataSate.noData));
         }
       } else {
         _getRestaurants(queries);
       }
     }
-    print(queries.map((e) => e));
   }
 
   @override
@@ -110,19 +110,23 @@ class RestaurantsViewModel extends BaseViewModel
   @override
   setCategory(CategoryDataModel? categoryDataModel) async {
     final categoriesResult = await categoriesResultOutput.first;
-    if (categoriesResult != null) {
-      categoriesResultInput.add(CategoriesResult(
+    if (categoriesResult is CategoriesSuccess) {
+      categoriesResultInput.add(CategoriesSuccess(
           categoriesModel: categoriesResult.categoriesModel,
+          genericDataSate: GenericDataSate.data,
           categoryDataModel: categoryDataModel));
     }
   }
 
   _getRestaurants(List<String> queries,
       {RestaurantsModel? restaurantsModel}) async {
+    restaurantsResultInput.add(RestaurantsSuccess(
+        restaurantsModel: restaurantsModel,
+        genericDataState: GenericDataSate.error));
     (await _getRestaurantsUseCase.execute(queries)).fold(
         (l) => restaurantsResultInput.add(RestaurantsSuccess(
             restaurantsModel: restaurantsModel,
-            restaurantsDataLoads: RestaurantsDataLoads.error)), (r) {
+            genericDataState: GenericDataSate.error)), (r) {
       final restaurantsDataModel = r.restaurantsDataModel;
       restaurantsResultInput.add(RestaurantsSuccess(
           restaurantsModel: RestaurantsModel(
@@ -133,15 +137,20 @@ class RestaurantsViewModel extends BaseViewModel
                     ]
                   : restaurantsDataModel,
               total: r.total),
-          restaurantsDataLoads: RestaurantsDataLoads.data));
+          genericDataState: GenericDataSate.data));
     });
   }
 
   _getCategories() async {
     (await _getCategoriesUseCase.execute(null)).fold(
-        (l) => categoriesResultInput.add(null),
-        (r) => categoriesResultInput
-            .add(CategoriesResult(categoriesModel: r, categoryDataModel: null)));
+        (l) => categoriesResultInput.add(CategoriesSuccess(
+            categoriesModel: null,
+            genericDataSate: GenericDataSate.error,
+            categoryDataModel: null)),
+        (r) => categoriesResultInput.add(CategoriesSuccess(
+            categoriesModel: r,
+            genericDataSate: GenericDataSate.data,
+            categoryDataModel: null)));
   }
 }
 

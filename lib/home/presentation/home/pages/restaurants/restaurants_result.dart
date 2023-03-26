@@ -1,13 +1,14 @@
 import 'package:user_cedtodo/home/domain/model/restaurants_model.dart';
+import 'package:user_cedtodo/startapp/presentation/results/generic_data_state.dart';
 
 abstract class RestaurantsResult {}
 
 class RestaurantsSuccess extends RestaurantsResult {
   final RestaurantsModel? restaurantsModel;
-  final RestaurantsDataLoads restaurantsDataLoads;
+  final GenericDataSate genericDataState;
 
   RestaurantsSuccess(
-      {required this.restaurantsModel, required this.restaurantsDataLoads});
+      {required this.restaurantsModel, required this.genericDataState});
 }
 
-enum RestaurantsDataLoads { loadData, data, noData ,error}
+

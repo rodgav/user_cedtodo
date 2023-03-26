@@ -1,9 +1,16 @@
 import 'package:user_cedtodo/home/domain/model/categories_model.dart';
+import 'package:user_cedtodo/startapp/presentation/results/generic_data_state.dart';
+import 'package:user_cedtodo/startapp/presentation/results/generic_result.dart';
 
-class CategoriesResult {
-  final CategoriesModel categoriesModel;
+abstract class CategoriesResult {}
+
+class CategoriesSuccess extends CategoriesResult{
+  final CategoriesModel? categoriesModel;
+  final GenericDataSate genericDataSate;
   CategoryDataModel? categoryDataModel;
 
-  CategoriesResult(
-      {required this.categoriesModel, required this.categoryDataModel});
+  CategoriesSuccess(
+      {required this.categoriesModel,
+      required this.genericDataSate,
+      required this.categoryDataModel});
 }

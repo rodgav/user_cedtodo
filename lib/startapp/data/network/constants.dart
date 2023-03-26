@@ -11,4 +11,7 @@ class Constants {
   static const categoriesId = '64164d17824d01d74b19';
   static const restaurantsId = '641648ac15b886bcd3b2';
   static const addressesId = '6416478fa8d9ae07876b';
+
+  static const sessionBox = 'sessionBox';
+  static const sessionAdapter = 'sessionAdapter';
 }

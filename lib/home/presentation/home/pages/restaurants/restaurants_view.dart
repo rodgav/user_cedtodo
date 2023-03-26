@@ -8,6 +8,7 @@ import 'package:user_cedtodo/home/presentation/home/pages/restaurants/widgets/it
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/widgets/item_restaurant.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/widgets/restaurants_shimmer.dart';
 import 'package:user_cedtodo/main.dart';
+import 'package:user_cedtodo/startapp/presentation/results/generic_data_state.dart';
 
 class RestaurantsView extends StatefulWidget {
   const RestaurantsView({Key? key}) : super(key: key);
@@ -86,40 +87,42 @@ class _RestaurantsViewState extends State<RestaurantsView> {
                 builder: (_, snapshot) {
                   if (snapshot.hasData) {
                     final categoriesResult = snapshot.data;
-                    return categoriesResult != null
-                        ? SizedBox(
-                            height: 50,
-                            width: size.width,
-                            child: ListView.separated(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (_, index) {
-                                  final categoryData = categoriesResult
-                                      .categoriesModel
-                                      .categoriesDataModel[index];
-                                  return ItemCategory(
-                                    categoryData,
-                                    categoryDataSel:
-                                        categoriesResult.categoryDataModel,
-                                    callBackCategory: () {
-                                      _restaurantsViewModel
-                                          .setCategory(categoryData);
-                                      _restaurantsViewModel
-                                          .setSearchRestaurants(
-                                              category: categoryData
-                                                  .categoryModel.name);
-                                    },
-                                  );
-                                },
-                                separatorBuilder: (_, index) =>
-                                    const SizedBox(width: 10),
-                                itemCount: categoriesResult.categoriesModel
-                                    .categoriesDataModel.length),
-                          )
-                        : const SizedBox();
+                    if (categoriesResult is CategoriesSuccess) {
+                      final categoriesModel =
+                          categoriesResult.categoriesModel?.categoriesDataModel;
+                      return categoriesModel != null &&
+                              categoriesModel.isNotEmpty
+                          ? SizedBox(
+                              height: 50,
+                              width: size.width,
+                              child: ListView.separated(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (_, index) {
+                                    final categoryData = categoriesModel[index];
+                                    return ItemCategory(
+                                      categoryData,
+                                      categoryDataSel:
+                                          categoriesResult.categoryDataModel,
+                                      callBackCategory: () {
+                                        _restaurantsViewModel
+                                            .setCategory(categoryData);
+                                        _restaurantsViewModel
+                                            .setSearchRestaurants(
+                                                category: categoryData
+                                                    .categoryModel.name);
+                                      },
+                                    );
+                                  },
+                                  separatorBuilder: (_, index) =>
+                                      const SizedBox(width: 10),
+                                  itemCount: categoriesModel.length),
+                            )
+                          : const SizedBox();
+                    }
                   } else if (snapshot.hasError) {
                     return const Center(child: Text('Ocurrio un error'));
                   }
@@ -135,15 +138,16 @@ class _RestaurantsViewState extends State<RestaurantsView> {
                       if (restaurantsResult is RestaurantsSuccess) {
                         final restaurantsDataModel = restaurantsResult
                             .restaurantsModel?.restaurantsDataModel;
-                        return restaurantsDataModel != null
+                        return restaurantsDataModel != null &&
+                                restaurantsDataModel.isNotEmpty
                             ? ListView.separated(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
                                 physics: const BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 itemBuilder: (_, index) {
-                                  if (restaurantsResult.restaurantsDataLoads ==
-                                          RestaurantsDataLoads.loadData &&
+                                  if (restaurantsResult.genericDataState ==
+                                          GenericDataSate.loadingData &&
                                       index == restaurantsDataModel.length) {
                                     return const SizedBox(
                                       width: 48,
@@ -151,14 +155,14 @@ class _RestaurantsViewState extends State<RestaurantsView> {
                                       child: CircularProgressIndicator(),
                                     );
                                   } else if (restaurantsResult
-                                              .restaurantsDataLoads ==
-                                          RestaurantsDataLoads.noData &&
+                                              .genericDataState ==
+                                          GenericDataSate.noData &&
                                       index == restaurantsDataModel.length) {
                                     return const Center(
                                         child: Text('No hay mas datos'));
                                   } else if (restaurantsResult
-                                              .restaurantsDataLoads ==
-                                          RestaurantsDataLoads.data &&
+                                              .genericDataState ==
+                                          GenericDataSate.data &&
                                       index == restaurantsDataModel.length) {
                                     return const SizedBox();
                                   } else {

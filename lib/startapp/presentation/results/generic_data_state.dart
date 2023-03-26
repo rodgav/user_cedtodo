@@ -1,0 +1,1 @@
+enum GenericDataSate { loadingData, data, noData ,error}
