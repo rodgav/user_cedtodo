@@ -1,9 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:appwrite/models.dart' as models;
+import 'package:user_cedtodo/startapp/application/constants.dart';
 
 part 'session_adapter.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: Constants.sessionCacheAdapterTypeId)
 class SessionCacheAdapter extends HiveObject {
   @HiveField(0)
   models.Session session;
@@ -47,7 +48,7 @@ class SessionAdapter extends TypeAdapter<models.Session> {
   }
 
   @override
-  int get typeId =>1;
+  int get typeId => Constants.sessionAdapterTypeId;
 
   @override
   void write(BinaryWriter writer, models.Session obj) {

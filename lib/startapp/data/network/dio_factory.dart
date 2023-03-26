@@ -1,7 +1,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:user_cedtodo/startapp/data/network/constants.dart';
+import 'package:user_cedtodo/startapp/application/constants.dart';
 
 const String applicationJson = 'application/json';
 const String contentType = 'content-type';

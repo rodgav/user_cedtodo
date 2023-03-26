@@ -13,5 +13,7 @@ class Constants {
   static const addressesId = '6416478fa8d9ae07876b';
 
   static const sessionBox = 'sessionBox';
-  static const sessionAdapter = 'sessionAdapter';
+  static const sessionCacheAdapter = 'sessionAdapter';
+  static const sessionCacheAdapterTypeId = 0;
+  static const sessionAdapterTypeId = 1;
 }

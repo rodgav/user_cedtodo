@@ -2,7 +2,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:user_cedtodo/startapp/data/network/constants.dart';
+import 'package:user_cedtodo/startapp/application/constants.dart';
 
 class HomeService {
   final Dio _dio;
