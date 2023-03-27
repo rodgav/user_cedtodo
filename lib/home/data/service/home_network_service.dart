@@ -4,13 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:user_cedtodo/startapp/application/constants.dart';
 
-class HomeService {
+class HomeNetworkService {
   final Dio _dio;
   final Account _account;
   final Avatars _avatars;
   final Databases _databases;
 
-  HomeService(this._dio, Client client)
+  HomeNetworkService(this._dio, Client client)
       : _account = Account(client),
         _avatars = Avatars(client),
         _databases = Databases(client);

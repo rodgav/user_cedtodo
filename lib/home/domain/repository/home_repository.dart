@@ -22,4 +22,8 @@ abstract class HomeRepository {
   Future<Either<Failure, ProductsModel>> products(List<String> queries);
 
   Future<Either<Failure, ProductDataModel>> product(String productId);
+
+  Future<Either<Failure, List<ProductModel>>> getCart();
+
+  Future<Either<Failure, ProductModel>> putCart(ProductModel productModel);
 }

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:appwrite/models.dart';
 import 'package:dartz/dartz.dart';
+import 'package:user_cedtodo/home/data/datasource/home_local_datasource.dart';
 import 'package:user_cedtodo/home/data/datasource/home_remote_datasource.dart';
 import 'package:user_cedtodo/home/data/mapper/categories_mapper.dart';
 import 'package:user_cedtodo/home/data/mapper/products_mapper.dart';
@@ -20,10 +21,12 @@ import 'package:user_cedtodo/startapp/internationalization/intl/l10n.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource _homeRemoteDataSource;
+  final HomeLocalDataSource _homeLocalDataSource;
   final NetworkInfo? _networkInfo;
   final S _s;
 
-  HomeRepositoryImpl(this._homeRemoteDataSource, this._networkInfo, this._s);
+  HomeRepositoryImpl(this._homeRemoteDataSource, this._homeLocalDataSource,
+      this._networkInfo, this._s);
 
   @override
   Future<Either<Failure, Account>> getAccount() async {
@@ -150,6 +153,28 @@ class HomeRepositoryImpl implements HomeRepository {
       }
     } else {
       return Left(DataSource.no_internet_connection.getFailure(0, _s));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ProductModel>>> getCart() async {
+    final listProducts = await _homeLocalDataSource.getCart();
+    if (listProducts != null) {
+      return Right(listProducts);
+    } else {
+      return Left(DataSource.cache_error.getFailure(0, _s));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ProductModel>> putCart(
+      ProductModel productModel) async {
+    final newProductModel =
+        await _homeLocalDataSource.putCart(productModel);
+    if (newProductModel != null) {
+      return Right(newProductModel);
+    } else {
+      return Left(DataSource.cache_error.getFailure(0, _s));
     }
   }
 }

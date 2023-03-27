@@ -16,7 +16,15 @@ extension ProductsResponseMapper on ProductsResponse? {
 extension ProductDataResponseMapper on ProductDataResponse? {
   ProductDataModel toDomain() {
     return ProductDataModel(
-        productModel: this?.productResponse.toDomain(),
+        productModel: this?.productResponse?.toDomain() ??
+            ProductModel(
+                productId: empty,
+                restaurantId: empty,
+                name: empty,
+                description: empty,
+                menu: empty,
+                price: zeroDouble,
+                image: empty),
         collectionId: this?.collectionId ?? empty,
         databaseId: this?.databaseId ?? empty,
         createdAt: this?.createdAt ?? dateTime,
@@ -31,7 +39,7 @@ extension ProductResponseMapper on ProductResponse? {
         restaurantId: this?.restaurantId ?? empty,
         name: this?.name ?? empty,
         description: this?.description ?? empty,
-        menu: this?.menu ?? iterableEmpty.cast<String>().toList(),
+        menu: this?.menu ?? empty,
         price: this?.price ?? zeroDouble,
         image: this?.image ?? empty);
   }

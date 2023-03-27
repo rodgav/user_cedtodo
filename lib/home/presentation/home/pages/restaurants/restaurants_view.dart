@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:user_cedtodo/home/domain/model/categories_model.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/categories_result.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_result.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_viewmodel.dart';
@@ -23,7 +22,7 @@ class _RestaurantsViewState extends State<RestaurantsView> {
 
   _bind() async {
     _restaurantsViewModel.start();
-    await _restaurantsViewModel.getRestaurants();
+    _restaurantsViewModel.getRestaurants();
   }
 
   @override
@@ -112,7 +111,7 @@ class _RestaurantsViewState extends State<RestaurantsView> {
                                             .setCategory(categoryData);
                                         _restaurantsViewModel
                                             .setSearchRestaurants(
-                                                category: categoryData
+                                                field: categoryData
                                                     .categoryModel.name);
                                       },
                                     );
@@ -132,7 +131,7 @@ class _RestaurantsViewState extends State<RestaurantsView> {
             Expanded(
               child: StreamBuilder<RestaurantsResult?>(
                   stream: _restaurantsViewModel.restaurantsResultOutput,
-                  builder: (_, AsyncSnapshot snapshot) {
+                  builder: (_, snapshot) {
                     if (snapshot.hasData) {
                       final restaurantsResult = snapshot.data;
                       if (restaurantsResult is RestaurantsSuccess) {

@@ -5,6 +5,7 @@ part 'products_response.g.dart';
 
 @JsonSerializable()
 class ProductsResponse extends BaseTotalResponse {
+  @JsonKey(name: 'documents')
   List<ProductDataResponse>? productsDataResponse;
 
   ProductsResponse({required this.productsDataResponse, required int total})
@@ -18,6 +19,7 @@ class ProductsResponse extends BaseTotalResponse {
 
 @JsonSerializable()
 class ProductDataResponse extends BaseIdsResponse {
+  @JsonKey(name: 'data')
   final ProductResponse? productResponse;
 
   ProductDataResponse(
@@ -49,7 +51,7 @@ class ProductResponse {
   @JsonKey(name: 'description', defaultValue: '')
   final String? description;
   @JsonKey(name: 'menu')
-  final List<String>? menu;
+  final String? menu;
   @JsonKey(name: 'price')
   final double? price;
   @JsonKey(name: 'image', defaultValue: '')

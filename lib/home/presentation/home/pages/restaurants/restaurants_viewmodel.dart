@@ -8,6 +8,7 @@ import 'package:user_cedtodo/home/presentation/home/pages/restaurants/categories
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_result.dart';
 import 'package:user_cedtodo/startapp/presentation/base/base_viewmodel.dart';
 import 'package:user_cedtodo/startapp/presentation/results/generic_data_state.dart';
+import 'package:user_cedtodo/startapp/util/generic_search.dart';
 
 class RestaurantsViewModel extends BaseViewModel
     with RestaurantsViewModelInput, RestaurantsViewModelOutput {
@@ -21,8 +22,7 @@ class RestaurantsViewModel extends BaseViewModel
   BehaviorSubject<RestaurantsResult?> _restaurantsStreCtrl =
       BehaviorSubject<RestaurantsResult?>.seeded(null);
 
-  SearchRestaurants _searchRestaurants =
-      SearchRestaurants(name: null, category: null);
+  GenericSearch _genericSearch = GenericSearch(name: null, field: null);
 
   @override
   start() {
@@ -32,6 +32,7 @@ class RestaurantsViewModel extends BaseViewModel
     if (_restaurantsStreCtrl.isClosed) {
       _restaurantsStreCtrl = BehaviorSubject<RestaurantsResult?>.seeded(null);
     }
+    _genericSearch = GenericSearch(name: null, field: null);
     _getCategories();
     return super.start();
   }
@@ -40,6 +41,7 @@ class RestaurantsViewModel extends BaseViewModel
   finish() {
     _categoriesStreCtrl.close();
     _restaurantsStreCtrl.close();
+    _genericSearch = GenericSearch(name: null, field: null);
     return super.finish();
   }
 
@@ -61,11 +63,11 @@ class RestaurantsViewModel extends BaseViewModel
   @override
   getRestaurants() async {
     List<String> queries = List<String>.empty(growable: true);
-    _searchRestaurants.name != null
-        ? queries.add(Query.search('name', _searchRestaurants.name!))
+    _genericSearch.name != null
+        ? queries.add(Query.search('name', _genericSearch.name!))
         : null;
-    _searchRestaurants.category != null
-        ? queries.add(Query.search('category', _searchRestaurants.category!))
+    _genericSearch.field != null
+        ? queries.add(Query.search('category', _genericSearch.field!))
         : null;
     queries.add(Query.limit(20));
     int offset = 0;
@@ -96,14 +98,14 @@ class RestaurantsViewModel extends BaseViewModel
   @override
   setSearchRestaurants(
       {String? name,
-      String? category,
+      String? field,
       bool nameNull = false,
-      bool categoryNull = false}) {
+      bool fieldNull = false}) {
     restaurantsResultInput.add(null);
-    nameNull ? _searchRestaurants.name = null : null;
-    categoryNull ? _searchRestaurants.category = null : null;
-    _searchRestaurants = _searchRestaurants.copyWith(
-        name: nameNull ? null : name, category: categoryNull ? null : category);
+    nameNull ? _genericSearch.name = null : null;
+    fieldNull ? _genericSearch.field = null : null;
+    _genericSearch = _genericSearch.copyWith(
+        name: nameNull ? null : name, field: fieldNull ? null : field);
     getRestaurants();
   }
 
@@ -120,9 +122,7 @@ class RestaurantsViewModel extends BaseViewModel
 
   _getRestaurants(List<String> queries,
       {RestaurantsModel? restaurantsModel}) async {
-    restaurantsResultInput.add(RestaurantsSuccess(
-        restaurantsModel: restaurantsModel,
-        genericDataState: GenericDataSate.error));
+    restaurantsResultInput.add(null);
     (await _getRestaurantsUseCase.execute(queries)).fold(
         (l) => restaurantsResultInput.add(RestaurantsSuccess(
             restaurantsModel: restaurantsModel,
@@ -161,7 +161,11 @@ abstract class RestaurantsViewModelInput {
 
   getRestaurants();
 
-  setSearchRestaurants({String? name, String? category});
+  setSearchRestaurants(
+      {String? name,
+      String? field,
+      bool nameNull = false,
+      bool fieldNull = false});
 
   setCategory(CategoryDataModel? categoryDataModel);
 }
@@ -170,16 +174,4 @@ abstract class RestaurantsViewModelOutput {
   Stream<CategoriesResult?> get categoriesResultOutput;
 
   Stream<RestaurantsResult?> get restaurantsResultOutput;
-}
-
-class SearchRestaurants {
-  String? name;
-  String? category;
-
-  SearchRestaurants({this.name, this.category});
-
-  SearchRestaurants copyWith({String? name, String? category}) {
-    return SearchRestaurants(
-        name: name ?? this.name, category: category ?? this.category);
-  }
 }

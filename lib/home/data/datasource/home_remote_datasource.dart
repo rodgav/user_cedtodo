@@ -1,6 +1,6 @@
 import 'package:appwrite/models.dart' as models;
 import 'package:flutter/foundation.dart';
-import 'package:user_cedtodo/home/data/service/home_service.dart';
+import 'package:user_cedtodo/home/data/service/home_network_service.dart';
 
 abstract class HomeRemoteDataSource {
   Future<models.Account> getAccount();
@@ -21,7 +21,7 @@ abstract class HomeRemoteDataSource {
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
-  final HomeService _homeService;
+  final HomeNetworkService _homeService;
 
   HomeRemoteDataSourceImpl(this._homeService);
 

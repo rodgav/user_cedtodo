@@ -6,6 +6,10 @@ abstract class RestaurantResult {}
 class RestaurantSuccess extends RestaurantResult {
   final RestaurantDataModel? restaurantDataModel;
   final GenericDataSate genericDataSate;
+  String? menu;
 
-  RestaurantSuccess({required this.restaurantDataModel,required this.genericDataSate});
+  RestaurantSuccess(
+      {required this.restaurantDataModel,
+      required this.genericDataSate,
+      required this.menu});
 }
