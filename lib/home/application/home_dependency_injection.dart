@@ -91,7 +91,8 @@ void initRestaurant() async {
         getIt<GetRestaurantUseCase>(),
         getIt<GetProductsUseCase>(),
         getIt<GetCartUseCase>(),
-        getIt<PutCartUseCase>()));
+        getIt<PutCartUseCase>(),
+        getIt<ClearCartUseCase>()));
   }
 }
 
@@ -110,7 +111,12 @@ void initCart() {
   initHomeModule();
   _initCartUseCases();
   if (!GetIt.I.isRegistered<CartViewModel>()) {
-    getIt.registerLazySingleton(() => CartViewModel(getIt<GetCartUseCase>(),
-        getIt<PutCartUseCase>(), getIt<ClearCartUseCase>()));
+    getIt.registerLazySingleton(() => CartViewModel(
+        getIt<GetCartUseCase>(),
+        getIt<PutCartUseCase>(),
+        getIt<ClearCartUseCase>(),
+        GetIt.I.isRegistered<HomeRepository>()
+            ? getIt<RestaurantViewModel>()
+            : null));
   }
 }

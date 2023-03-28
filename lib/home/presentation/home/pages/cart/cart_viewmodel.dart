@@ -4,6 +4,8 @@ import 'package:user_cedtodo/home/domain/usecases/clear_cart_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_cart_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/put_cart_usecase.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/cart/cart_result.dart';
+import 'package:user_cedtodo/home/presentation/home/pages/restaurant/products_result.dart';
+import 'package:user_cedtodo/home/presentation/home/pages/restaurant/restaurant_viewmodel.dart';
 import 'package:user_cedtodo/startapp/presentation/base/base_viewmodel.dart';
 import 'package:user_cedtodo/startapp/presentation/results/generic_data_state.dart';
 
@@ -12,9 +14,10 @@ class CartViewModel extends BaseViewModel
   final GetCartUseCase _getCartUseCase;
   final PutCartUseCase _putCartUseCase;
   final ClearCartUseCase _clearCartUseCase;
+  final RestaurantViewModel? _restaurantViewModel;
 
   CartViewModel(
-      this._getCartUseCase, this._putCartUseCase, this._clearCartUseCase);
+      this._getCartUseCase, this._putCartUseCase, this._clearCartUseCase,this._restaurantViewModel);
 
   BehaviorSubject<CartResult?> _cartResultStreCtrl =
       BehaviorSubject<CartResult?>.seeded(null);
@@ -45,6 +48,7 @@ class CartViewModel extends BaseViewModel
   addProductCart(ProductModel productModel) async {
     productModel.quantity += 1;
     _updateProductCart(productModel);
+    await _updateProductRestaurant(productModel);
   }
 
   @override
@@ -53,12 +57,14 @@ class CartViewModel extends BaseViewModel
       productModel.quantity -= 1;
       _updateProductCart(productModel);
     }
+   await _updateProductRestaurant(productModel);
   }
 
   @override
   clearCart() async {
     (await _clearCartUseCase.execute(null))
         .fold((l) => setToastMessage(l.message), (r) => null);
+    _restaurantViewModel?.clearCart();
   }
 
   _updateProductCart(ProductModel productModel) async {
@@ -78,6 +84,20 @@ class CartViewModel extends BaseViewModel
       }
       _getCart();
     });
+  }
+
+  _updateProductRestaurant(ProductModel productModel)async{
+    final productsResult =
+        await _restaurantViewModel?.productsResultOutput.first;
+    if (productsResult is ProductsSuccess) {
+      final productsModel = productsResult.productsModel?.productsDataModel;
+      final index = productsModel?.indexWhere((element) =>
+      element.productModel.productId == productModel.productId);
+      if (index != null && index != -1) {
+        productsModel?[index].productModel.quantity = productModel.quantity;
+        _restaurantViewModel?.productsResultInput.add(productsResult);
+      }
+    }
   }
 
   _getCart() async {

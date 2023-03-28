@@ -216,9 +216,6 @@ class _RestaurantViewState extends State<RestaurantView> {
                                         return productsDataModel != null &&
                                                 productsDataModel.isNotEmpty
                                             ? ListView.separated(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
                                                 physics:
                                                     const BouncingScrollPhysics(),
                                                 shrinkWrap: true,

@@ -7,6 +7,7 @@ import 'package:user_cedtodo/home/presentation/home/pages/restaurants/widgets/it
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/widgets/item_restaurant.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/widgets/restaurants_shimmer.dart';
 import 'package:user_cedtodo/main.dart';
+import 'package:user_cedtodo/startapp/presentation/resources/routing/route.dart';
 import 'package:user_cedtodo/startapp/presentation/results/generic_data_state.dart';
 
 class RestaurantsView extends StatefulWidget {
@@ -42,6 +43,37 @@ class _RestaurantsViewState extends State<RestaurantsView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.white,
+        title: SizedBox(
+          height: 40,
+          child: TextFormField(
+            controller: _searchTextEditCtrl,
+            decoration: InputDecoration(
+              hintText: 'Nombre del restaurante',
+              border: const OutlineInputBorder(),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              suffixIcon: Ink(
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  child: const Icon(Icons.search),
+                  onTap: () {
+                    final searchText = _searchTextEditCtrl.text.trim();
+                    _restaurantsViewModel.setSearchRestaurants(
+                        name: searchText,
+                        nameNull: searchText.isEmpty ? true : false);
+                  },
+                ),
+              ),
+            ),
+            onFieldSubmitted: (value) {
+              final searchText = _searchTextEditCtrl.text.trim();
+              _restaurantsViewModel.setSearchRestaurants(
+                  name: value, nameNull: searchText.isEmpty ? true : false);
+            },
+          ),
+        ),
+      ),
       body: SafeArea(
         left: false,
         right: false,
@@ -51,36 +83,6 @@ class _RestaurantsViewState extends State<RestaurantsView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextFormField(
-                controller: _searchTextEditCtrl,
-                decoration: InputDecoration(
-                    label: const Text('Buscar restaurantes'),
-                    hintText: 'Nombre del restaurante',
-                    suffixIcon: Ink(
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        child: const Icon(Icons.search),
-                        onTap: () {
-                          final searchText = _searchTextEditCtrl.text.trim();
-                          _restaurantsViewModel.setSearchRestaurants(
-                              name: searchText,
-                              nameNull: searchText.isEmpty ? true : false);
-                        },
-                      ),
-                    ),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                onFieldSubmitted: (value) {
-                  final searchText = _searchTextEditCtrl.text.trim();
-
-                  _restaurantsViewModel.setSearchRestaurants(
-                      name: value, nameNull: searchText.isEmpty ? true : false);
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
             StreamBuilder<CategoriesResult?>(
                 stream: _restaurantsViewModel.categoriesResultOutput,
                 builder: (_, snapshot) {

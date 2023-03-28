@@ -2,6 +2,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:user_cedtodo/home/domain/model/products_model.dart';
 import 'package:user_cedtodo/home/domain/model/restaurants_model.dart';
+import 'package:user_cedtodo/home/domain/usecases/clear_cart_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_cart_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_products_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_restaurant_usecase.dart';
@@ -18,9 +19,10 @@ class RestaurantViewModel extends BaseViewModel
   final GetProductsUseCase _getProductsUseCase;
   final GetCartUseCase _getCartUseCase;
   final PutCartUseCase _putCartUseCase;
+  final ClearCartUseCase _clearCartUseCase;
 
   RestaurantViewModel(this._getRestaurantUseCase, this._getProductsUseCase,
-      this._getCartUseCase, this._putCartUseCase);
+      this._getCartUseCase, this._putCartUseCase, this._clearCartUseCase);
 
   BehaviorSubject<RestaurantResult?> _restaurantResultStreCtrl =
       BehaviorSubject<RestaurantResult?>();
@@ -174,6 +176,12 @@ class RestaurantViewModel extends BaseViewModel
     }
   }
 
+  @override
+  clearCart() async {
+    (await _clearCartUseCase.execute(null))
+        .fold((l) => setToastMessage(l.message), (r) => null);
+  }
+
   _getProducts(List<String> queries, {ProductsModel? productsModel}) async {
     productsResultInput.add(null);
     (await _getProductsUseCase.execute(queries)).fold((l) {
@@ -209,13 +217,15 @@ class RestaurantViewModel extends BaseViewModel
           }
         }
       }
-      getCart();
+      _getCart();
     });
   }
 
-  getCart() async {
-    (await _getCartUseCase.execute(null)).fold(
-        (l) => cartProductsInput.add(null), (r) => cartProductsInput.add(r));
+  _getCart() async {
+    (await _getCartUseCase.execute(null))
+        .fold((l) => cartProductsInput.add(null), (r) {
+      cartProductsInput.add(r);
+    });
   }
 }
 
@@ -241,6 +251,8 @@ abstract class RestaurantViewModelInput {
   addProductCart(ProductModel productModel);
 
   removeProductCart(ProductModel productModel);
+
+  clearCart();
 }
 
 abstract class RestaurantViewModelOutput {

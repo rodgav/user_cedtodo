@@ -138,5 +138,5 @@ class AppRoute {
 }
 
 extension AppRouteExtension on BuildContext {
-  back() => canPop() ? pop(true) : go(AppRoutes.splash);
+  back() => canPop() ? pop(false) : go(AppRoutes.splash);
 }

@@ -1,14 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:user_cedtodo/home/domain/model/products_model.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/cart/cart_result.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/cart/cart_viewmodel.dart';
-import 'package:user_cedtodo/home/presentation/home/pages/restaurant/widgets/item_product.dart';
 import 'package:user_cedtodo/main.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/dialogs/dialogs.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/route.dart';
-import 'package:user_cedtodo/startapp/presentation/resources/routing/routes.dart';
 
 class CartView extends StatefulWidget {
   const CartView({Key? key}) : super(key: key);
