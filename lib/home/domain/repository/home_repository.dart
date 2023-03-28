@@ -26,4 +26,5 @@ abstract class HomeRepository {
   Future<Either<Failure, List<ProductModel>>> getCart();
 
   Future<Either<Failure, ProductModel>> putCart(ProductModel productModel);
+  Future<Either<Failure, bool>> clear();
 }

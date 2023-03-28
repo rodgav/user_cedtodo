@@ -169,10 +169,19 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<Failure, ProductModel>> putCart(
       ProductModel productModel) async {
-    final newProductModel =
-        await _homeLocalDataSource.putCart(productModel);
+    final newProductModel = await _homeLocalDataSource.putCart(productModel);
     if (newProductModel != null) {
       return Right(newProductModel);
+    } else {
+      return Left(DataSource.cache_error.getFailure(0, _s));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> clear() async {
+    final clear = await _homeLocalDataSource.clear();
+    if (clear) {
+      return  Right(clear);
     } else {
       return Left(DataSource.cache_error.getFailure(0, _s));
     }

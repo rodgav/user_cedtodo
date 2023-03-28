@@ -10,22 +10,22 @@ import 'package:user_cedtodo/delivery/presentation/delivery/delivery_view.dart';
 import 'package:user_cedtodo/home/application/home_dependency_injection.dart';
 import 'package:user_cedtodo/home/domain/model/restaurants_model.dart';
 import 'package:user_cedtodo/home/presentation/home/home_view.dart';
+import 'package:user_cedtodo/home/presentation/home/pages/cart/cart_view.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/profile/profile_view.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurant/restaurant_view.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_view.dart';
-import 'package:user_cedtodo/purchase/presentation/cart/cart_view.dart';
 import 'package:user_cedtodo/purchase/presentation/finalize_purchase/finalize_purchase_view.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/routes.dart';
 import 'package:user_cedtodo/startapp/presentation/splash/splash_view.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
+final GlobalKey<NavigatorState> rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey =
+final GlobalKey<NavigatorState> shellNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 class AppRoute {
   static final route = GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.splash,
     routerNeglect: true,
     debugLogDiagnostics: true,
@@ -58,7 +58,7 @@ class AppRoute {
             return const RecoverPasswordConfirmView();
           }),
       ShellRoute(
-          navigatorKey: _shellNavigatorKey,
+          navigatorKey: shellNavigatorKey,
           builder: (context, state, widget) => HomeView(widget: widget),
           routes: [
             GoRoute(
@@ -79,7 +79,16 @@ class AppRoute {
                           restaurantId: restaurantId,
                           restaurantDataModel: restaurantDataModel,
                         );
-                      })
+                      },
+                      routes: [
+                        GoRoute(
+                            path:
+                                AppRoutes.cart,
+                            builder: (context, state) {
+                              initCart();
+                              return const CartView();
+                            }),
+                      ]),
                 ]),
             GoRoute(
                 path: AppRoutes.profile,
@@ -88,11 +97,6 @@ class AppRoute {
                   return const ProfileView();
                 }),
           ]),
-      GoRoute(
-          path: AppRoutes.cart,
-          builder: (context, state) {
-            return const CartView();
-          }),
       GoRoute(
           path: AppRoutes.finalizePurchase,
           builder: (context, state) {
@@ -134,5 +138,5 @@ class AppRoute {
 }
 
 extension AppRouteExtension on BuildContext {
-  back() => canPop() ? pop() : go(AppRoutes.splash);
+  back() => canPop() ? pop(true) : go(AppRoutes.splash);
 }

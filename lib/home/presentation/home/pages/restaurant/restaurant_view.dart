@@ -29,6 +29,7 @@ class RestaurantView extends StatefulWidget {
 
 class _RestaurantViewState extends State<RestaurantView> {
   final _restaurantViewModel = getIt<RestaurantViewModel>();
+  final _searchTextEditCtrl = TextEditingController();
 
   _bind() async {
     _restaurantViewModel.start();
@@ -68,6 +69,53 @@ class _RestaurantViewState extends State<RestaurantView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: Ink(
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            child: const Icon(Icons.arrow_back_ios_new_outlined,
+                color: Colors.black54),
+            onTap: () {
+              context.back();
+            },
+          ),
+        ),
+        title: SizedBox(
+          height: 40,
+          child: TextFormField(
+            controller: _searchTextEditCtrl,
+            decoration: InputDecoration(
+              hintText: 'Buscar',
+              border: const OutlineInputBorder(),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              suffixIcon: Ink(
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  child: const Icon(Icons.search),
+                  onTap: () {
+                    if (widget.restaurantId != null) {
+                      final searchText = _searchTextEditCtrl.text.trim();
+                      _restaurantViewModel.setSearchProducts(
+                          widget.restaurantId!,
+                          name: searchText,
+                          nameNull: searchText.isEmpty ? true : false);
+                    }
+                  },
+                ),
+              ),
+            ),
+            onFieldSubmitted: (value) {
+              if (widget.restaurantId != null) {
+                final searchText = _searchTextEditCtrl.text.trim();
+                _restaurantViewModel.setSearchProducts(widget.restaurantId!,
+                    name: value, nameNull: searchText.isEmpty ? true : false);
+              }
+            },
+          ),
+        ),
+      ),
       body: SafeArea(
         left: false,
         right: false,
@@ -260,7 +308,10 @@ class _RestaurantViewState extends State<RestaurantView> {
                 opacity: count > 0 ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 500),
                 child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      context
+                          .push('${AppRoutes.restaurants}/${AppRoutes.restaurant}/${widget.restaurantId}/${AppRoutes.cart}');
+                    },
                     icon: const Icon(Icons.shopping_cart_outlined),
                     label: Column(
                       mainAxisSize: MainAxisSize.min,

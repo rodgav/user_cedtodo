@@ -32,6 +32,11 @@ class ItemProduct extends StatelessWidget {
           decoration: const BoxDecoration(shape: BoxShape.circle),
           child: InkWell(
             customBorder: const CircleBorder(),
+            onTap: productModel.quantity <= 0
+                ? () {
+                    _restaurantViewModel.addProductCart(productModel);
+                  }
+                : null,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 500),
               width: productModel.quantity <= 0 ? 30 : 80,
@@ -54,11 +59,8 @@ class ItemProduct extends StatelessWidget {
                                     child:
                                         const Icon(Icons.remove_circle_outline),
                                     onTap: () {
-                                      if (!(productModel.quantity <= 0)) {
-                                        productModel.quantity -= 1;
-                                        _restaurantViewModel
-                                            .actionProductCart(productModel);
-                                      }
+                                      _restaurantViewModel
+                                          .removeProductCart(productModel);
                                     },
                                   ))),
                           Flexible(
@@ -71,19 +73,14 @@ class ItemProduct extends StatelessWidget {
                                     customBorder: const CircleBorder(),
                                     child: const Icon(Icons.add_circle_outline),
                                     onTap: () {
-                                      productModel.quantity += 1;
                                       _restaurantViewModel
-                                          .actionProductCart(productModel);
+                                          .addProductCart(productModel);
                                     },
                                   ))),
                         ],
                       ),
                     ),
             ),
-            onTap: () {
-              productModel.quantity += 1;
-              _restaurantViewModel.actionProductCart(productModel);
-            },
           )),
     );
   }

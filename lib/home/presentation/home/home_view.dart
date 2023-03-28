@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:user_cedtodo/startapp/presentation/resources/dialogs/dialogs.dart';
 import 'package:user_cedtodo/startapp/presentation/resources/routing/routes.dart';
 
 class HomeView extends StatefulWidget {
@@ -14,16 +15,23 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: widget.widget,
-      bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _getIndex(),
-          onTap: _onSelect,
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.store), label: 'restaurants'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
-          ]),
+    return WillPopScope(
+      onWillPop: () =>
+          showDialogMessage(context, leftText: 'Cancelar', leftOnPressed: () {
+        context.pop(false);
+      }, rightText: 'Salir'),
+      child: Scaffold(
+        body: widget.widget,
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _getIndex(),
+            onTap: _onSelect,
+            items: const [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.store), label: 'restaurants'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), label: 'profile'),
+            ]),
+      ),
     );
   }
 

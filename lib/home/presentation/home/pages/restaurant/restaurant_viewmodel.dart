@@ -160,6 +160,20 @@ class RestaurantViewModel extends BaseViewModel
     }
   }
 
+  @override
+  addProductCart(ProductModel productModel) async {
+    productModel.quantity += 1;
+    _updateProductCart(productModel);
+  }
+
+  @override
+  removeProductCart(ProductModel productModel) async {
+    if (!(productModel.quantity <= 0)) {
+      productModel.quantity -= 1;
+      _updateProductCart(productModel);
+    }
+  }
+
   _getProducts(List<String> queries, {ProductsModel? productsModel}) async {
     productsResultInput.add(null);
     (await _getProductsUseCase.execute(queries)).fold((l) {
@@ -178,7 +192,7 @@ class RestaurantViewModel extends BaseViewModel
     });
   }
 
-  actionProductCart(ProductModel productModel) async {
+  _updateProductCart(ProductModel productModel) async {
     (await _putCartUseCase.execute(productModel))
         .fold((l) => setToastMessage(l.message), (r) async {
       final productResult = await productsResultOutput.first;
@@ -188,9 +202,11 @@ class RestaurantViewModel extends BaseViewModel
         if (productsDataModel != null) {
           final index = productsDataModel.indexWhere((element) =>
               element.productModel.productId == productModel.productId);
-          productsDataModel[index].productModel.quantity =
-              productModel.quantity;
-          productsResultInput.add(productResult);
+          if (index != -1) {
+            productsDataModel[index].productModel.quantity =
+                productModel.quantity;
+            productsResultInput.add(productResult);
+          }
         }
       }
       getCart();
@@ -221,6 +237,10 @@ abstract class RestaurantViewModelInput {
       bool fieldNull = false});
 
   setMenu(String? menu);
+
+  addProductCart(ProductModel productModel);
+
+  removeProductCart(ProductModel productModel);
 }
 
 abstract class RestaurantViewModelOutput {

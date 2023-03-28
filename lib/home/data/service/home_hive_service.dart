@@ -34,30 +34,36 @@ class HomeHiveService {
         if (index != -1) {
           if (productModel.quantity <= 0) {
             listProductModel.removeAt(index);
-            return await _putProductModel(listProductModel, productModel);
+            await _putProductModel(listProductModel);
           } else {
             listProductModel[index].quantity = productModel.quantity;
-            return await _putProductModel(listProductModel, productModel);
+            await _putProductModel(listProductModel);
           }
         } else {
-          return await _putProductModel(
-              [...listProductModel, productModel], productModel);
+          await _putProductModel([...listProductModel, productModel]);
         }
       } else {
-        return await _putProductModel([productModel], productModel);
+        await _putProductModel([productModel]);
       }
+      return productModel;
     } catch (_) {
       return null;
     }
   }
 
-  Future<ProductModel> _putProductModel(
-      List<ProductModel> productsModel, ProductModel productModel) async {
+  Future<void> _putProductModel(List<ProductModel> productsModel) async {
     final dateTime = DateTime.now();
     final cartAdapter =
         CartAdapter(productsModel: productsModel, dateTime: dateTime);
     await _cartBox.clear();
     await _cartBox.put(Constants.cartAdapter, cartAdapter);
-    return productModel;
+  }
+
+  Future<bool> clear() async {
+    await _cartBox.clear();
+    if (_cartBox.length > 0) {
+      return true;
+    }
+    return false;
   }
 }

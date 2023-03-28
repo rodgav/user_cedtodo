@@ -10,6 +10,7 @@ import 'package:user_cedtodo/home/data/repository/home_repository_impl.dart';
 import 'package:user_cedtodo/home/data/service/home_hive_service.dart';
 import 'package:user_cedtodo/home/data/service/home_network_service.dart';
 import 'package:user_cedtodo/home/domain/repository/home_repository.dart';
+import 'package:user_cedtodo/home/domain/usecases/clear_cart_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/delete_session_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_account_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_cart_usecase.dart';
@@ -19,6 +20,7 @@ import 'package:user_cedtodo/home/domain/usecases/get_products_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_restaurant_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/get_restaurants_usecase.dart';
 import 'package:user_cedtodo/home/domain/usecases/put_cart_usecase.dart';
+import 'package:user_cedtodo/home/presentation/home/pages/cart/cart_viewmodel.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/profile/profile_viewmodel.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurant/restaurant_viewmodel.dart';
 import 'package:user_cedtodo/home/presentation/home/pages/restaurants/restaurants_viewmodel.dart';
@@ -99,5 +101,16 @@ void _initCartUseCases() {
         () => GetCartUseCase(getIt<HomeRepository>()));
     getIt.registerLazySingleton<PutCartUseCase>(
         () => PutCartUseCase(getIt<HomeRepository>()));
+    getIt.registerLazySingleton<ClearCartUseCase>(
+        () => ClearCartUseCase(getIt<HomeRepository>()));
+  }
+}
+
+void initCart() {
+  initHomeModule();
+  _initCartUseCases();
+  if (!GetIt.I.isRegistered<CartViewModel>()) {
+    getIt.registerLazySingleton(() => CartViewModel(getIt<GetCartUseCase>(),
+        getIt<PutCartUseCase>(), getIt<ClearCartUseCase>()));
   }
 }

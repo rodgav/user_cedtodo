@@ -6,7 +6,7 @@ class AppRoutes {
   static const recoverPasswordConfirm = '/recoverPasswordConfirm';
   static const restaurants = '/restaurants';
   static const restaurant = 'restaurant';
-  static const cart = '/cart';
+  static const cart = 'cart';
   static const finalizePurchase = '/finalizePurchase';
   static const delivery = '/delivery';
   static const chat = '/chat';

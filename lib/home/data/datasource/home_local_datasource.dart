@@ -5,6 +5,8 @@ abstract class HomeLocalDataSource {
   Future<List<ProductModel>?> getCart();
 
   Future<ProductModel?> putCart(ProductModel productModel);
+
+  Future<bool> clear();
 }
 
 class HomeLocalDataSourceImpl implements HomeLocalDataSource {
@@ -18,4 +20,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
   @override
   Future<ProductModel?> putCart(ProductModel productModel) =>
       _homeHiveService.putCart(productModel);
+
+  @override
+  Future<bool> clear() => _homeHiveService.clear();
 }
